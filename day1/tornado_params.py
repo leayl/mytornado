@@ -1,3 +1,5 @@
+import json
+
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.options import define, parse_config_file, options
@@ -82,14 +84,29 @@ class BlogHandler(RequestHandler):
         if username:
             self.write('welcome '+username)
         else:
-            self.set_status(888, 'funny') # 手动设置相应航状态码,不轻易自己设置
-            self.write('welcome to blog')
+            # self.set_status(888, 'funny') # 手动设置相应行状态码,不轻易自己设置
+            # self.write('welcome to blog')
 
             # 生成一个错误页面,参数为状态码
-            self.send_error(404) # 传递给write_error方法
+            # self.send_error(404) # 传递给write_error方法
         # 获取自定义请求头
-        print(self.request.headers.get('myhead', None))
+        # print(self.request.headers.get('myhead', None))
 
+
+            # 返回json字符串作为服务器的响应
+            # 第一步，构建字典，把要返回的内容作为字典的键值对
+            resp = {'key1': 'value1',
+                    'key2': 'value2'
+                    }
+            # # 第二步，把字典转化为JSON字符串
+            # jsonstr = json.dumps(resp)
+            # # 第三步，将JSON字符串作为服务器相应发送给客户端
+            # self.set_header('Content-Type','apolication/json;charset=UTF-8')
+            # self.write(jsonstr)
+            # # 请求头格式Content-Type:text/html
+
+            # 也可跳过二三步，直接返回resp,tornado会自动解析
+            self.write(resp)
     def post(self, *args, **kwargs):
         pass
 
