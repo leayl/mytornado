@@ -3,17 +3,12 @@ import json
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.options import define, parse_config_file, options
-from tornado.web import Application, RequestHandler
+from tornado.web import Application, RequestHandler, UIModule
 
 
 class IndexHandler(RequestHandler):
     def get(self, *args, **kwargs):
-        msg = self.get_query_argument('msg', None)
-        r = ''
-        if msg:
-            r = '用户名或密码错误'
-        self.render('login.html', result=r)
-
+        self.render('login.html')
 
     def post(self, *args, **kwargs):
         pass
@@ -66,14 +61,48 @@ class BlogHandler(RequestHandler):
         pass
 
     def get(self, *args, **kwargs):
-        self.render('blog.html', a=5,blogs=[
+        self.render('blog.html')
+
+    def post(self, *args, **kwargs):
+        pass
+
+    def write_error(self, status_code, **kwargs):
+
+        if status_code == 500:
+            self.write('犯错了！！！')
+        else:
+            # 对于非500错误码，进行原来的错误提示
+            super().write_error(status_code, **kwargs)
+
+
+class RegisterHandler(RequestHandler):
+    def get(self, *args, **kwargs):
+        self.render('register.html')
+
+    def post(self, *args, **kwargs):
+        pass
+
+
+class LoginModule(UIModule):
+    def render(self, *args, **kwargs):
+        # msg = self.get_query_argument('msg', None)
+        msg = self.request.query
+        r = ''
+        if msg:
+            r = '用户名或密码错误'
+        return self.render_string('moduler/login_module.html', result=r)
+
+
+class BlogModule(UIModule):
+    def render(self, *args, **kwargs):
+        blogs = [
             {
-                 'title': '第一篇博客',
-                 'tags': '情感　星座　生活',
-                 'author': '朱一龙的兄弟一号',
-                 'content': '朱一龙今天啃手指甲了吗？',
-                 'commit': 8,
-                 'avatar': 'ju1.jpeg',
+                'title': '第一篇博客',
+                'tags': '情感　星座　生活',
+                'author': '朱一龙的兄弟一号',
+                'content': '朱一龙今天啃手指甲了吗？',
+                'commit': 8,
+                'avatar': 'ju1.jpeg',
             },
             {
                 'title': '第二篇博客',
@@ -99,24 +128,28 @@ class BlogHandler(RequestHandler):
                 'commit': 8,
                 'avatar': 'ju4.jpeg',
             },
-        ])
+        ]
+        return self.render_string('moduler/blog_module.html', blogs=blogs)
 
-    def post(self, *args, **kwargs):
-        pass
 
-    def write_error(self, status_code, **kwargs):
+class RegisterModule(UIModule):
+    def render(self, *args, **kwargs):
+        return self.render_string('moduler/register_module.html')
 
-        if status_code == 500:
-            self.write('犯错了！！！')
-        else:
-            # 对于非500错误码，进行原来的错误提示
-            super().write_error(status_code, **kwargs)
 
 app = Application([
     ('/', IndexHandler),
     ('/login', LoginHandler),
     ('/blog', BlogHandler), # 可以在后面以字典的方式传入初始化参数，在nitialize方法中接受处理
-], template_path='templates', static_path='statics')
+    ('/register', RegisterHandler),
+],
+    template_path='templates',
+    static_path='statics',
+    ui_modules={'loginmodule': LoginModule,
+                'blogmodule': BlogModule,
+                'registermodule': RegisterModule,
+                }
+)
 server = HTTPServer(app)
 define('port', type=int, default=8888)
 parse_config_file('../config/conf')
