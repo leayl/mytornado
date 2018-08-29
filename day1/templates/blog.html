@@ -1,60 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+{% extends base.html %}
+
+    {% block title %}
+        博客
+    {% end %}
+    {% block head %}
     <style>
         *{padding: 0px;margin: 0px;}
     </style>
-</head>
-<body>
-    <div></div>
-    <div id="content">
-        <ul style="list-style-type: none;width: 80%;margin: 0px auto">
-            {%　for blog in blogs %}
-            <li class="blog">
-                <table width="100%" cellpadding="10px" cellspacing="10px">
-                    <tr>
-                        <td rowspan="4" width="30%" align="center">
-                            <table>
-                                <tr>
-                                    <td>
-                                        <img width="258px" height="145px"
-                                             src="static/images/{{ blog['avatar'] }}" alt="">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="center">
-                                        <p style="width:200px ;white-space: nowrap;overflow: hidden;text-overflow: '...'">{{ blog['author'] }}</p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td>{{ blog['title'] }}</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span>{{ blog['tags'] }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="min-height: 100px;display: block;">
-                            {{ blog['content'] }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="right">
-                            {% if blog['commit'] %}
-                            评论数量:{{ blog['commit'] }}
-                            {% else %}
-                            还没有评论，快来第一个评论吧!
-                            {% end %}
-                        </td>
-                    </tr>
-                </table>
-            </li>
-            {% end %}
-        </ul>
-    </div>
-</body>
-</html>
+    {% end %}
+
+{% block body %}
+{% module blogmodule()%}
+{% end %}
