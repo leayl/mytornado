@@ -1,5 +1,6 @@
 import json
 
+import pymysql
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.options import define, parse_config_file, options
@@ -22,29 +23,26 @@ class LoginHandler(RequestHandler):
         username = self.get_body_argument('username', None)
         password = self.get_body_argument('password', None)
 
-        if username == 'abc' and password == '123':
-            # 如果用户上传了图片，则保存图片
-            # HTTPServerRequest对象的files属性
-            # 以字典的方式组织上传文件,{key1:[file1,file2,...],...}
-            # 如果未上传文件，为{}
-            files = self.request.files
-            if files:
-                avatars = files.get('avatar')
-                for avatar in avatars:
-                    # 上传文件有三个属性：
-                    # type：文件类型
-                    # filename：文件的原始名字
-                    # body：该文件的内容（二进制格式）
-                    body = avatar.get('body')
-                    filename = avatar.get('filename')
-                    # 将body写入一个文件，进行保存
-                    writer = open('../upload/{}'.format(filename), 'wb')
-                    writer.write(body)
-                    writer.close()
-            self.redirect('/blog?username='+username)
-        else:
-            self.redirect('/?msg=fail')
+        db = {
+            'host':'localhost',
+            'port':3306,
+            'user':'root',
+            'password':'123456',
+            'database': 'myblog',
+            'charset':'utf8',
+        }
+        connection = pymysql.connect(**db)
+        cursor = connection.cursor()
+        sql = 'select count(*) from tb_user where user_name="{}" ' \
+              'and user_password="{}"'.format(username, password)
 
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        print(result)
+        if result:
+            pass
+        else:
+            pass
 
 class BlogHandler(RequestHandler):
     def set_default_headers(self):
