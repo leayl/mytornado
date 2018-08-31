@@ -1,4 +1,4 @@
-<form action="/login" method="post">
+<form action="/register" method="post" enctype="multipart/form-data">
     <fieldset>
         <legend>注册</legend>
         <table>
@@ -31,7 +31,31 @@
             </td>
         </tr>
         <tr>
+            <td>
+                <span>上传头像</span>
+            </td>
+            <td>
+                <input type="file" name="avatar">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span>城市</span>
+            </td>
+            <td>
+                <select name="city" id="city">
+                    <option value="chengdu">成都</option>
+                    <option value="xian">西安</option>
+                    <option value="wuhan">武汉</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><span style="color: red">{{result}}</span></td>
+        </tr>
+        <tr>
             <td><input type="submit" value="注册" align="center"></td>
+            <td><input type="reset" value="重置" align="center"></td>
         </tr>
     </table>
     </fieldset>
